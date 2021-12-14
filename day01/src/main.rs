@@ -1,7 +1,6 @@
 extern crate num;
 
 use std::fs::File;
-use std::io::prelude::*;
 use std::io::{BufReader, BufRead};
 use std::error::Error;
 use std::str::FromStr;
