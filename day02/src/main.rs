@@ -5,13 +5,14 @@ use nom::{
     Finish,
     branch::alt,
     bytes::complete::{tag},
-    character::complete::*,
+    character::complete::u8,
     combinator::{value, map},
-    error::{Error, ParseError},
-    sequence::{pair, delimited},
+    error::{Error},
+    sequence::{pair},
 };
 
-// pub type Result<T> = result::Result<T, Box<dyn Error>>;
+use util_lib::read_file;
+use util_lib::nom::ws;
 
 #[derive(Debug, Clone, Copy)]
 enum Direction {
@@ -38,36 +39,6 @@ impl FromStr for Movement {
             })
         }
     }
-}
-
-/// A combinator that takes a parser `inner` and produces a parser that also consumes both leading and 
-/// trailing whitespace, returning the output of `inner`.
-fn ws<'a, F: 'a, O, E: ParseError<&'a str>>(inner: F) -> impl FnMut(&'a str) -> IResult<&'a str, O, E>
-  where
-  F: Fn(&'a str) -> IResult<&'a str, O, E>,
-{
-  delimited(
-    multispace0,
-    inner,
-    multispace0
-  )
-}
-
-use std::fs::File;
-use std::io::{BufReader, BufRead};
-
-fn read_file<T: FromStr>(filename: &str) -> Result<Vec<T>, Box<dyn std::error::Error>> 
-where 
-    T: FromStr, 
-    T::Err: std::error::Error + 'static
-{
-    let input_file = File::open(filename).unwrap();
-    let buffered_input = BufReader::new(input_file);
-
-    let numbers = buffered_input.lines()
-                    .map(|line| Ok(line?.parse()?) );
-
-    return numbers.collect();
 }
 
 fn direction(input: &str)-> IResult<&str, Direction>{
